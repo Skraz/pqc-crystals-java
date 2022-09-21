@@ -108,6 +108,8 @@ public class CrystalsKyberTest
         System.out.printf("Montgomery: %d\n", (Reduce.montgomeryReduce(c) * 2285) % 3329); // 2 ^ 16 mod 3329
         System.out.printf("Plantard: %d\n", (Reduce.plantardReduce(c) * 1976) % 3329); // (-2) ^ 32 mod 3329
         
+
+        
     }
 
     private void testRNG()
