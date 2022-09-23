@@ -86,7 +86,7 @@ public class Ntt
         // System.out.printf("a = %d, b = %d\n", a, b);
         int d = a * b;
         // System.out.printf("Montgomery = %d, Plantard = %d\n\n", Reduce.montgomeryReduce((short)(a * b)), Reduce.plantardReduce(d));
-        return Reduce.montgomeryReduce(d);
+        return Reduce.plantardReduce(d);
     }
 
     public static void baseMult(Poly outPoly, int outIndex, short a0, short a1, short b0, short b1, short zeta)
