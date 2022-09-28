@@ -171,6 +171,7 @@ public class CrystalsKyberTest
                         KyberKEMExtractor KyberDecCipher = new KyberKEMExtractor(privParams);
 
                         byte[] dec_key = KyberDecCipher.extractSecret(generated_cipher_text);
+                        Helper.printByteArray(dec_key);
 
                         assertTrue(name + " " + count + ": kem_dec key", Arrays.areEqual(dec_key, secret));
 

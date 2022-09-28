@@ -109,8 +109,8 @@ class KyberIndCpa
         }
 
         secretKey.polyVecNtt();
-        System.out.print("SecretKey PolyVec = ");
-        Helper.printPolyVec(secretKey, kyberK);
+        // System.out.print("SecretKey PolyVec = ");
+        // Helper.printPolyVec(secretKey, kyberK);
         // System.out.print("SecretKeyPolyVec = [");
         // for (i = 0; i < kyberK; i++) {
         //     System.out.print("[");
