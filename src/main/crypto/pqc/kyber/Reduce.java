@@ -3,6 +3,11 @@ package crypto.pqc.kyber;
 public class Reduce
 {
 
+    /**
+     * Montgomery Reduction
+     * @param a
+     * @return
+     */
     public static short montgomeryReduce(int a)
     {
         int t;
@@ -31,6 +36,11 @@ public class Reduce
         return v;
     }
 
+    /**
+     * Barret Reduction
+     * @param a
+     * @return
+     */
     public static short barretReduce(short a)
     {
         short t;
@@ -41,6 +51,11 @@ public class Reduce
         return (short)(a - t);
     }
 
+    /**
+     * Conditional Subtract Q
+     * @param a
+     * @return
+     */
     public static short conditionalSubQ(short a)
     {
         a -= KyberEngine.KyberQ;

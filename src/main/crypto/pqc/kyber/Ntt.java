@@ -27,6 +27,11 @@ public class Ntt
         829, 2946, 3065, 1325, 2756, 1861, 1474, 1202, 2367, 3147, 1752, 2707, 171,
         3127, 3042, 1907, 1836, 1517, 359, 758, 1441};
 
+    /**
+     * NTT
+     * @param inp
+     * @return
+     */
     public static short[] ntt(short[] inp)
     {
         short[] r = new short[KyberEngine.KyberN];
@@ -51,6 +56,11 @@ public class Ntt
         return r;
     }
 
+    /**
+     * Inverse NTT
+     * @param inp
+     * @return
+     */
     public static short[] invNtt(short[] inp)
     {
         short[] r = new short[KyberEngine.KyberN];
@@ -81,14 +91,30 @@ public class Ntt
         return r;
     }
 
+    /**
+     * Factor Q Multiplication Montgomery
+     * @param a
+     * @param b
+     * @return
+     */
     public static short factorQMulMont(short a, short b)
     {
         // System.out.printf("a = %d, b = %d\n", a, b);
         int d = a * b;
         // System.out.printf("Montgomery = %d, Plantard = %d\n\n", Reduce.montgomeryReduce((short)(a * b)), Reduce.plantardReduce(d));
-        return Reduce.plantardReduce(d);
+        return Reduce.montgomeryReduce(d);
     }
 
+    /**
+     * Base Multiplication / Butterfly
+     * @param outPoly
+     * @param outIndex
+     * @param a0
+     * @param a1
+     * @param b0
+     * @param b1
+     * @param zeta
+     */
     public static void baseMult(Poly outPoly, int outIndex, short a0, short a1, short b0, short b1, short zeta)
     {
         short outVal0 = factorQMulMont(a1, b1);

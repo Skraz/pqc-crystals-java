@@ -7,9 +7,11 @@ import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHAKEDigest;
 
 
+/**
+ * Engine for Kyber
+ */
 public class KyberEngine
 {
-
     private SecureRandom random;
     private KyberIndCpa indCpa;
     private PolyVec polyVec;
@@ -53,6 +55,10 @@ public class KyberEngine
     private final int CryptoPublicKeyBytes;
     private final int CryptoCipherTextBytes;
 
+    /**
+     * Getter for Eta2
+     * @return int: Kyber Eta 2
+     */
     public static int getKyberEta2()
     {
         return KyberEta2;
@@ -139,8 +145,18 @@ public class KyberEngine
         return KyberEta1;
     }
 
+    /**
+     * Kyber Engine
+     * @param k: Integer Determines the security level of Kyber
+     */
     public KyberEngine(int k)
     {
+        /**
+         * Security Levels:
+         * k = 2: Kyber 512
+         * k = 3: Kyber 738
+         * k = 4: Kyber 1024
+         */
         this.KyberK = k;
         switch (k)
         {
@@ -188,17 +204,30 @@ public class KyberEngine
         // Helper.printByteArray(b);
     }
 
+    /**
+     * Initialise Kyber Engine with a Secure Random
+     * @param random: SecureRandom Sets a Secure Random Number Generator
+     */
     public void init(SecureRandom random)
     {
         this.random = random;
     }
 
+    /**
+     * Updates the seed of the RNG
+     * @param seed
+     */
     public void updateSeed(byte[] seed)
     {
         this.seed = seed;
         random.setSeed(seed);
     }
 
+    /**
+     * Generates Public Key, Private Key Pair for KEM
+     * @return Byte[0]: Public Key for KEM
+     *         Byte[1]: Private Key for KEM
+     */
     public byte[][] generateKemKeyPair()
     {
         byte[][] indCpaKeyPair = indCpa.generateKeyPair();
@@ -224,6 +253,11 @@ public class KyberEngine
         return new byte[][]{outputPublicKey, secretKey};
     }
 
+    /**
+     * Encrypts data with the Public Key
+     * @param publicKeyInput: Public Key Byte Array
+     * @return Encrypted Message
+     */
     public byte[][] kemEncrypt(byte[] publicKeyInput)
     {
         byte[] outputCipherText;
@@ -271,10 +305,15 @@ public class KyberEngine
         outBuf[0] = outputSharedSecret;
         outBuf[1] = outputCipherText;
 
-        // return new byte[][]{};
         return outBuf;
     }
 
+    /**
+     * Decrypt the CipherText
+     * @param cipherText: Encrypted Message
+     * @param secretKey: Secret Key
+     * @return Decrypted Message
+     */
     public byte[] kemDecrypt(byte[] cipherText, byte[] secretKey)
     {
         byte[] outputSharedSecret = new byte[KyberSharedSecretBytes];
@@ -312,6 +351,13 @@ public class KyberEngine
         return outputSharedSecret;
     }
 
+    /**
+     * If b is True, then copy the contents of x to r, otherwise, return r.
+     * @param r: Byte to return
+     * @param x: Byte to check
+     * @param xlen: length of byte to check
+     * @param b: Boolean value to verify that it's correct
+     */
     private void cmov(byte[] r, byte[] x, int xlen, boolean b)
     {
         if (b)
@@ -324,6 +370,10 @@ public class KyberEngine
         }
     }
 
+    /**
+     * Generates Random Byte Array
+     * @param buf: Byte array to generate random bytes into
+     */
     public void getRandomBytes(byte[] buf)
     {
         this.random.nextBytes(buf);

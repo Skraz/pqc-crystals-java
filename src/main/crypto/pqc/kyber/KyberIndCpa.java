@@ -16,6 +16,10 @@ class KyberIndCpa
     private int polyVecCompressedBytes;
     private int polyCompressedBytes;
 
+    /**
+     * Kyber IND CPA Object Parameters
+     * @param engine: KyberEngine with Parameters set
+     */
     public KyberIndCpa(KyberEngine engine)
     {
         this.engine = engine;
@@ -32,7 +36,8 @@ class KyberIndCpa
     /**
      * Generates IndCpa Key Pair
      *
-     * @return KeyPair where each key is represented as bytes
+     * @return Byte[0]: Public Key Byte Array
+     *         Byte[1]: Private Key Byte Array
      */
     public byte[][] generateKeyPair()
     {
@@ -141,6 +146,13 @@ class KyberIndCpa
         return new byte[][]{packPublicKey(publicKey, publicSeed), packSecretKey(secretKey)};
     }
 
+    /**
+     * IND CPA Encrypt Message
+     * @param msg: Byte Array Message to Encrypt
+     * @param publicKeyInput: Byte Array of Public Key
+     * @param coins: Byte Array of Coins to use for Encryption // Unsure
+     * @return Byte Array of IND CPA Cipher Text
+     */
     public byte[] encrypt(byte[] msg, byte[] publicKeyInput, byte[] coins)
     {
         byte[] outputCipherText = new byte[indCpaBytes];
@@ -278,6 +290,12 @@ class KyberIndCpa
         return outputCipherText;
     }
 
+    /**
+     * Pack Cipher Text from the Polynomial Form to a Byte Array
+     * @param b: Compressed
+     * @param v: Compressed
+     * @return Compressed CipherText
+     */
     private byte[] packCipherText(PolyVec b, Poly v)
     {
         byte[] outBuf = new byte[indCpaBytes];
@@ -288,6 +306,12 @@ class KyberIndCpa
         return outBuf;
     }
 
+    /**
+     * Unpack Cipher Text from Compressed CipherText Byte Array
+     * @param b
+     * @param v
+     * @param cipherText
+     */
     private void unpackCipherText(PolyVec b, Poly v, byte[] cipherText)
     {
         byte[] compressedPolyVecCipherText = Arrays.copyOfRange(cipherText, 0, engine.getKyberPolyVecCompressedBytes());
@@ -297,6 +321,12 @@ class KyberIndCpa
         v.decompressPoly(compressedPolyCipherText);
     }
 
+    /**
+     * Pack Public Key
+     * @param publicKeyPolyVec
+     * @param seed
+     * @return
+     */
     public byte[] packPublicKey(PolyVec publicKeyPolyVec, byte[] seed)
     {
         byte[] buf = new byte[indCpaPublicKeyBytes];
@@ -305,6 +335,12 @@ class KyberIndCpa
         return buf;
     }
 
+    /**
+     * Unpack Public Key
+     * @param publicKeyPolyVec
+     * @param publicKey
+     * @return
+     */
     public byte[] unpackPublicKey(PolyVec publicKeyPolyVec, byte[] publicKey)
     {
         byte[] outputSeed = new byte[KyberEngine.KyberSymBytes];
@@ -313,16 +349,29 @@ class KyberIndCpa
         return outputSeed;
     }
 
+    /**
+     * Pack Private Key
+     * @param secretKeyPolyVec
+     * @return
+     */
     public byte[] packSecretKey(PolyVec secretKeyPolyVec)
     {
         return secretKeyPolyVec.toBytes();
     }
 
+    /**
+     * Unpack Private Key
+     * @param secretKeyPolyVec
+     * @param secretKey
+     */
     public void unpackSecretKey(PolyVec secretKeyPolyVec, byte[] secretKey)
     {
         secretKeyPolyVec.fromBytes(secretKey);
     }
 
+    /**
+     * Number of Blocks for Matrix Generation
+     */
     public final static int KyberGenerateMatrixNBlocks =
         (
             (
@@ -333,6 +382,12 @@ class KyberIndCpa
                 / Symmetric.SHAKE128_rate
         );
 
+    /**
+     * Generate a Matrix of size K
+     * @param aMatrix
+     * @param seed
+     * @param transposed
+     */
     public void generateMatrix(PolyVec[] aMatrix, byte[] seed, boolean transposed)
     {
         int i, j, k, ctr, off;
@@ -355,6 +410,11 @@ class KyberIndCpa
                 // System.out.print("xof squeeze output = ");
                 // Helper.printByteArray(buf);
                 int buflen = KyberGenerateMatrixNBlocks * Symmetric.SHAKE128_rate;
+
+                /**
+                 * Reject Sampling returns the number of elements in the matrix that it performed rejection
+                 * Sampling on.
+                 */
                 ctr = rejectionSampling(aMatrix[i].getVectorIndex(j), 0, KyberEngine.KyberN, buf, buflen);
 
                 while (ctr < KyberEngine.KyberN)
@@ -370,7 +430,6 @@ class KyberIndCpa
                     // System.out.print("ctr buf after = ");
                     // Helper.printByteArray(buf);
                     buflen = off + Symmetric.SHAKE128_rate;
-                    // Error in code Section Unsure
                     ctr += rejectionSampling(aMatrix[i].getVectorIndex(j), ctr, KyberEngine.KyberN - ctr, buf, buflen);
                 }
             }
@@ -378,6 +437,15 @@ class KyberIndCpa
 
     }
 
+    /**
+     * Rejects values which are larger than Kyber Q
+     * @param outputBuffer: Output Polynomial
+     * @param coeffOff: Integer Coefficient offset
+     * @param len: int Max size of input buffer
+     * @param inpBuf: Byte array Input Buffer
+     * @param inpBufLen: Int length of Input Buffer
+     * @return
+     */
     private static int rejectionSampling(Poly outputBuffer, int coeffOff, int len, byte[] inpBuf, int inpBufLen)
     {
         int ctr, pos;
@@ -403,6 +471,12 @@ class KyberIndCpa
 
     }
 
+    /**
+     * Decrypt Message with the Cipher Text and Secret Key
+     * @param cipherText: Byte Array
+     * @param secretKey: Byte Array
+     * @return
+     */
     public byte[] decrypt(byte[] cipherText, byte[] secretKey)
     {
         int i;

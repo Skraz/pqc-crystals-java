@@ -97,8 +97,8 @@ class Poly
         final short f = (short)(((long)1 << 32) % KyberEngine.KyberQ);
         for (i = 0; i < KyberEngine.KyberN; i++)
         {
-            this.setCoeffIndex(i, Reduce.plantardReduce(this.getCoeffIndex(i) * f));
-            // this.setCoeffIndex(i, Reduce.montgomeryReduce(this.getCoeffIndex(i) * f));
+            // this.setCoeffIndex(i, Reduce.plantardReduce(this.getCoeffIndex(i) * f));
+            this.setCoeffIndex(i, Reduce.montgomeryReduce(this.getCoeffIndex(i) * f));
         }
     }
 

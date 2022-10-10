@@ -3,6 +3,12 @@ package crypto.pqc.kyber;
 final class CBD
 {
 
+    /**
+     * Centred Binomial Distribution
+     * @param r: Output Polynomial
+     * @param bytes: Input Byte Array
+     * @param eta: Eta Value
+     */
     public static void kyberCBD(Poly r, byte[] bytes, int eta)
     {
         long t, d;
