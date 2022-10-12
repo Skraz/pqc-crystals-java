@@ -41,6 +41,7 @@ class Poly
         this.coeffs = coeffs;
     }
 
+    
     public void polyNtt()
     {
         this.setCoeffs(Ntt.ntt(this.getCoeffs()));

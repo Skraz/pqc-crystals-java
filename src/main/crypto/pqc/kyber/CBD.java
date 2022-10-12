@@ -5,9 +5,12 @@ final class CBD
 
     /**
      * Centred Binomial Distribution
-     * @param r: Output Polynomial
-     * @param bytes: Input Byte Array
-     * @param eta: Eta Value
+     * Given an array of uniformly random bytes, compute
+     * polynomial with coefficients distributed according to
+     * a centered binomial distribution with the eta value
+     * @param r Output Polynomial
+     * @param bytes Input Byte Array
+     * @param eta Eta Value of Kyber
      */
     public static void kyberCBD(Poly r, byte[] bytes, int eta)
     {
@@ -53,8 +56,9 @@ final class CBD
      * Converts an Array of Bytes to a 32-bit Unsigned Integer
      * Returns a 32-bit unsigned integer as a long
      *
-     * @param x
-     * @return
+     * @param x Input Byte Array
+     * @param int Offset within the Byte Array
+     * @return 32-bit unsigned integer as long 
      */
     private static long convertByteTo32BitUnsignedInt(byte[] x, int offset)
     {
@@ -74,8 +78,9 @@ final class CBD
      * Converts an Array of Bytes to a 24-bit Unsigned Integer
      * Returns a 24-bit unsigned integer as a long from byte x
      *
-     * @param x
-     * @return
+     * @param x Input Byte Array
+     * @param int Offset within the Byte Array
+     * @return 24-bit unsigned integer as long 
      */
     private static long convertByteTo24BitUnsignedInt(byte[] x, int offset)
     {
