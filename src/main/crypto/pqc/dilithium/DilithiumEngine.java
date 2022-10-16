@@ -218,6 +218,10 @@ class DilithiumEngine
         }
     }
 
+    /**
+     * Generates public and private key.
+     * @return byte[][]: [Public Key Byte Array, Private Key Byte Array]
+     */
     public byte[][] generateKeyPair()
     {
         byte[] seedBuf = new byte[SeedBytes];
@@ -299,6 +303,16 @@ class DilithiumEngine
         return new byte[][]{pk, sk[0], sk[1], sk[2], sk[3], sk[4], sk[5]};
     }
 
+    /**
+     * Computes Signature
+     * @param msg byte[]: Message to be signed
+     * @param msglen int: Length of Message
+     * @param rho byte[]: Unpacked Rho
+     * @param key byte[]: Unpacked key
+     * @param tr byte[]: Unpakced tr
+     * @param secretKey byte[]: Unpacked Secret Key
+     * @return byte[]: Signature of length Crypto Bytes
+     */
     public byte[] signSignature(byte[] msg, int msglen, byte[] rho, byte[] key, byte[] tr, byte[] secretKey)
     {
         int n;
@@ -454,6 +468,16 @@ class DilithiumEngine
 
     }
 
+    /**
+     * 
+     * @param msg
+     * @param mlen
+     * @param rho
+     * @param key
+     * @param tr
+     * @param secretKey
+     * @return
+     */
     public byte[] sign(byte[] msg, int mlen, byte[] rho, byte[] key, byte[] tr, byte[] secretKey)
     {
         byte[] signedMessage = new byte[CryptoBytes];
@@ -462,6 +486,15 @@ class DilithiumEngine
         return signedMessage;
     }
 
+    /**
+     * Verifies Signature
+     * @param sig
+     * @param siglen
+     * @param msg
+     * @param msglen
+     * @param publicKey
+     * @return True if Verified Correctly, False if not.
+     */
     public boolean signVerify(byte[] sig, int siglen, byte[] msg, int msglen, byte[] publicKey)
     {
         byte[] buf,
@@ -580,6 +613,14 @@ class DilithiumEngine
         return true;
     }
 
+    /**
+     * Verify Signed Message
+     * @param msg
+     * @param signedMsg
+     * @param signedMsglen
+     * @param publicKey
+     * @return True if verified correctly, False otherwise. 
+     */
     public boolean signOpen(byte[] msg, byte[] signedMsg, int signedMsglen, byte[] publicKey)
     {
         return signVerify(signedMsg, signedMsglen, msg, msg.length, publicKey);

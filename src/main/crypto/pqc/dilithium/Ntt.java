@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 class Ntt
 {
+    // Montgomery Ntt Zetas
     static final int[] nttZetas = {
         0, 25847, -2608894, -518909, 237124, -777960, -876248, 466468,
         1826347, 2353451, -359251, -2091905, 3119733, -2884855, 3111497, 2680103,
@@ -39,6 +40,13 @@ class Ntt
         -554416, 3919660, -48306, -1362209, 3937738, 1400424, -846154, 1976782
     };
 
+    /**
+     * Forward NTT. No modular reduction is performed after
+     * additions or subtractions. Output vector is in bitreversed order. 
+     * Not in place (Requires In Place)
+     * @param a int[]: Input Coefficient Array
+     * @return Output Coefficient Array
+     */
     static int[] ntt(int[] a)
     {
         int[] r = Arrays.copyOfRange(a, 0, a.length);
@@ -65,6 +73,15 @@ class Ntt
     }
 
 
+    /**
+     * Inverse NTT and multiplication by Montgomery factor 2^32.
+     * No modular reductions after additions or subtractions;
+     * input coefficients need to be smaller than Q in absolute value.
+     * Output coefficient are smaller than Q in absolute value.
+     * Not in place (Requires to be In Place)
+     * @param a
+     * @return
+     */
     static int[] invNttToMont(int[] a)
     {
         int start, len, j, k;

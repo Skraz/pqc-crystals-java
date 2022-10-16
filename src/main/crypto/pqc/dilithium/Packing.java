@@ -5,6 +5,13 @@ import java.util.Arrays;
 class Packing
 {
 
+    /**
+     * Bit-pack public key pk = (rho, t1)
+     * @param rho byte[]: Byte Array containing rho
+     * @param t1 PolyVecK: Poly Vector t1
+     * @param engine DilithiumEngine: Engine for current mode
+     * @return byte[]: Packed Public Key Byte Array of Crypto Public Key Bytes
+     */
     static byte[] packPublicKey(byte[] rho, PolyVecK t1, DilithiumEngine engine)
     {
         byte[] out = new byte[engine.getCryptoPublicKeyBytes()];
@@ -17,6 +24,13 @@ class Packing
         return out;
     }
 
+    /**
+     * Unpack public key pk = (rho, t1).
+     * @param t1 PolyVecK: Poly Vector t1
+     * @param publicKey byte[]: Byte Array containing Bit-Packed Public Key
+     * @param engine DilithiumEngine: Engine for current mode
+     * @return rho byte[]: Byte Array containing rho
+     */
     static byte[] unpackPublicKey(PolyVecK t1, byte[] publicKey, DilithiumEngine engine)
     {
         int i;
@@ -28,6 +42,17 @@ class Packing
         return Arrays.copyOfRange(publicKey, 0, DilithiumEngine.SeedBytes);
     }
 
+    /**
+     * Bit-pack secret key sk = (rho, tr, key, t0, s1, s2).
+     * @param rho 
+     * @param tr
+     * @param key
+     * @param t0
+     * @param s1
+     * @param s2
+     * @param engine
+     * @return
+     */
     static byte[][] packSecretKey(byte[] rho, byte[] tr, byte[] key, PolyVecK t0, PolyVecL s1, PolyVecK s2, DilithiumEngine engine)
     {
         byte[][] out = new byte[6][];
@@ -62,6 +87,7 @@ class Packing
     }
 
     /**
+     * Unpack secret key sk = (rho, tr, key, t0, s1, s2).
      * @param t0
      * @param s1
      * @param s2
@@ -96,6 +122,14 @@ class Packing
         }
     }
 
+    /**
+     * Bit-pack signature sig = (c, z, h).
+     * @param c
+     * @param z
+     * @param h
+     * @param engine
+     * @return
+     */
     static byte[] packSignature(byte[] c, PolyVecL z, PolyVecK h, DilithiumEngine engine)
     {
         int i, j, k, end = 0;
@@ -134,6 +168,14 @@ class Packing
 
     }
 
+    /**
+     * Unpack signature sig = (c, z, h).
+     * @param z
+     * @param h
+     * @param sig
+     * @param engine
+     * @return False if Malformed, True otherwise.
+     */
     static boolean unpackSignature(PolyVecL z, PolyVecK h, byte[] sig, DilithiumEngine engine)
     {
         int i, j, k;
