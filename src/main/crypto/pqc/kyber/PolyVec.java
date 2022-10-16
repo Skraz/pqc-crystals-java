@@ -33,6 +33,9 @@ class PolyVec
         return vec[i];
     }
 
+    /**
+     * Apply forward NTT to all elements of a vector of polynomials
+     */
     public void polyVecNtt()
     {
         int i;
@@ -42,6 +45,10 @@ class PolyVec
         }
     }
 
+    /**
+     * Apply inverse NTT to all elements of a vector of polynomials
+     * and multiply by Montgomery factor 2^16
+     */
     public void polyVecInverseNttToMont()
     {
         for (int i = 0; i < kyberK; i++)
@@ -50,6 +57,10 @@ class PolyVec
         }
     }
 
+    /**
+     * Compress and serialize vector of polynomials
+     * @return byte[]: Compressed PolyVec Bytes
+     */
     public byte[] compressPolyVec()
     {
         int i, j, k;
@@ -136,6 +147,11 @@ class PolyVec
         return r;
     }
 
+    /**
+     * De-serialize and decompress vector of polynomials;
+     * approximate inverse of polyvec_compress
+     * @param compressedPolyVecCipherText byte[]: Compressed PolyVec bytes
+     */
     public void decompressPolyVec(byte[] compressedPolyVecCipherText)
     {
         int i, j, k, count = 0;
@@ -190,6 +206,14 @@ class PolyVec
         }
     }
 
+    /**
+     * Pointwise multiply elements of a and b, accumulate into output Polynomial,
+     * and multiply by 2^-16.
+     * @param out Poly: Output Polynomial
+     * @param inp1 Poly: First input Polynomial
+     * @param inp2 Poly: Second input Polynomial
+     * @param engine KyberEngine: Kyber Engine holding all constant variables
+     */
     public static void pointwiseAccountMontgomery(Poly out, PolyVec inp1, PolyVec inp2, KyberEngine engine)
     {
         int i;
@@ -204,6 +228,11 @@ class PolyVec
         out.reduce();
     }
 
+    /**
+     * Applies Barrett reduction to each coefficient
+     * of each element of a vector of polynomials
+     * Further details of Barrett Reduction in Reduce.java
+     */
     public void reducePoly()
     {
         int i;
@@ -214,6 +243,10 @@ class PolyVec
         }
     }
 
+    /**
+     * Add vectors of polynomials
+     * @param b PolyVec: Input PolyVec to Add
+     */
     public void addPoly(PolyVec b)
     {
         int i;
@@ -223,6 +256,10 @@ class PolyVec
         }
     }
 
+    /**
+     * Serialize vector of polynomials
+     * @return byte[]: PolyVec Converted to Bytes
+     */
     public byte[] toBytes()
     {
         byte[] r = new byte[polyVecBytes];
@@ -234,6 +271,11 @@ class PolyVec
         return r;
     }
 
+    /**
+     * De-serialize vector of polynomials;
+     * inverse of PolyVec toBytes
+     * @param inputBytes byte[]: Bytes which require conversion to PolyVec
+     */
     public void fromBytes(byte[] inputBytes)
     {
         for (int i = 0; i < kyberK; i++)
@@ -242,6 +284,11 @@ class PolyVec
         }
     }
 
+    /**
+     * Applies conditional subtraction of q to each coefficient
+     * of each element of a vector of polynomials
+     * Further details of Conditional Subtraction of Q in Reduce.java
+     */
     public void conditionalSubQ()
     {
         for (int i = 0; i < kyberK; i++)
@@ -250,6 +297,10 @@ class PolyVec
         }
     }
 
+    /**
+     * Convert PolyVec to String
+     * @return String: String format of an Array of Poly.
+     */
     public String toString()
     {
         String[] out = new String[engine.getKyberK()];

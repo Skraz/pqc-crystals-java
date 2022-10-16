@@ -41,9 +41,15 @@ class Poly
         this.coeffs = coeffs;
     }
 
-    
+
+    /**
+     * Computes Negacyclic Number-Theoretical Transform (NTT) of
+     * a polynomial in place;
+     * Input is in normal order, output is in bitreversed order
+     */
     public void polyNtt()
     {
+        // Make Constant Space Complexity
         this.setCoeffs(Ntt.ntt(this.getCoeffs()));
         // System.out.print("PolyNTT = [");
         // for (int i = 0; i < KyberEngine.KyberN; i++) {
@@ -53,11 +59,20 @@ class Poly
         this.reduce();
     }
 
+    /**
+     * Computes Inverse of NTT of a polynomial in place;
+     * Input is assumed to be in bit-reversed order,
+     * output is in normal order
+     */
     public void polyInverseNttToMont()
     {
         this.setCoeffs(Ntt.invNtt(this.getCoeffs()));
     }
 
+    /**
+     * Applies Barrett reduction to all coefficient of a polynomial
+     * Look at Reduce.java for further comments on Barrett Reduction
+     */
     public void reduce()
     {
         int i;
@@ -67,6 +82,12 @@ class Poly
         }
     }
 
+    /**
+     * Multiplication of two polynomials in NTT domain
+     * @param r Poly: Output Polynomial
+     * @param a Poly: First input Polynomial
+     * @param b Poly: Second input Polynomial
+     */
     public static void baseMultMontgomery(Poly r, Poly a, Poly b)
     {
         int i;
@@ -83,6 +104,11 @@ class Poly
         }
     }
 
+
+    /**
+     * Add Polynomial b to This Polynomial
+     * @param b Poly: Input Polynomial
+     */
     public void addCoeffs(Poly b)
     {
         int i;
@@ -92,6 +118,10 @@ class Poly
         }
     }
 
+    /**
+     * Inplace conversion of all coefficients of a polynomial
+     * from normal domain to Montgomery domain
+     */
     public void convertToMont()
     {
         int i;
@@ -103,6 +133,10 @@ class Poly
         }
     }
 
+    /**
+     * Compression and subsequent serialization of a polynomial
+     * @return Byte[]: Compressed Polynomial
+     */
     public byte[] compressPoly()
     {
         int i, j;
@@ -170,6 +204,11 @@ class Poly
         return r;
     }
 
+    /**
+     * De-serialization and subsequent decompression of a polynomial;
+     * Approximate Inverse of compressPoly
+     * @param compressedPolyCipherText byte[]: Compressed Poly Byte Array
+     */
     public void decompressPoly(byte[] compressedPolyCipherText)
     {
         int i, count = 0;
@@ -211,6 +250,10 @@ class Poly
 
     }
 
+    /**
+     * Serialisation of Polynomial
+     * @return byte[]: Serialised Poly Byte Array
+     */
     public byte[] toBytes()
     {
         byte[] r = new byte[KyberEngine.KyberPolyBytes];
@@ -229,6 +272,11 @@ class Poly
 
     }
 
+    /**
+     * De-Serialisation of a polynomial;
+     * Inverse of toBytes
+     * @param inpBytes byte[]: Byte Array to Deserialise
+     */
     public void fromBytes(byte[] inpBytes)
     {
         int i;
@@ -249,6 +297,10 @@ class Poly
         }
     }
 
+    /**
+     * Convert polynomial to 32-byte message
+     * @return byte[]: Output Message
+     */
     public byte[] toMsg()
     {
         byte[] outMsg = new byte[KyberEngine.getKyberIndCpaMsgBytes()];
@@ -269,6 +321,10 @@ class Poly
         return outMsg;
     }
 
+    /**
+     * Convert 32-byte message to polynomial
+     * @param msg byte[]: Input Message
+     */
     public void fromMsg(byte[] msg)
     {
         int i, j;
@@ -287,6 +343,11 @@ class Poly
         }
     }
 
+    /**
+     * Applies conditional subtraction of q to each coefficient
+     * of a polynomial.
+     * For further details of Conditional Sub of Q see Reduce.java
+     */
     public void conditionalSubQ()
     {
         int i;
@@ -296,6 +357,13 @@ class Poly
         }
     }
 
+    /**
+     * Sample a polynomial deterministically from a seed and a nonce,
+     * with output polynomial close to centered binomial distribution
+     * with parameter Kyber Eta1
+     * @param seed byte[]: Seed Byte Array
+     * @param nonce byte: Nonce Byte
+     */
     public void getEta1Noise(byte[] seed, byte nonce)
     {
         byte[] buf = new byte[KyberEngine.KyberN * eta1 / 4];
@@ -304,6 +372,13 @@ class Poly
         CBD.kyberCBD(this, buf, eta1);
     }
 
+    /**
+     * Sample a polynomial deterministically from a seed and a nonce,
+     * with output polynomial close to centered binomial distribution
+     * with parameter Kyber Eta2
+     * @param seed byte[]: Seed Byte Array
+     * @param nonce byte: Nonce Byte
+     */
     public void getEta2Noise(byte[] seed, byte nonce)
     {
         byte[] buf = new byte[KyberEngine.KyberN * eta2 / 4];
@@ -312,6 +387,10 @@ class Poly
         CBD.kyberCBD(this, buf, eta2);
     }
 
+    /**
+     * Subtract This Polynomial from b Poly. (b Poly - This Poly)
+     * @param b Poly: Polynomial to Subtract from
+     */
     public void polySubtract(Poly b)
     {
         int i;
@@ -321,6 +400,10 @@ class Poly
         }
     }
 
+    /**
+     * Convert Polynomial to String
+     * @return String: Coeffs listed in String
+     */
     public String toString()
     {
         return Arrays.toString(coeffs);

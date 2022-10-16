@@ -4,6 +4,13 @@ import org.bouncycastle.crypto.digests.SHAKEDigest;
 
 class Symmetric
 {
+    /**
+     * Absorb step of the SHAKE128 specialized for the Kyber context.
+     * @param seed byte[]: Kyber SymBytes byte array
+     * @param a int: Additional byte of input
+     * @param b int: Additional byte of input
+     * @return SHAKEDigest: Initialised SHAKE-128 Object
+     */
     public static SHAKEDigest KyberXOF(byte[] seed, int a, int b)
     {
         SHAKEDigest xof = new SHAKEDigest(128);
@@ -20,6 +27,12 @@ class Symmetric
 
     public final static int SHAKE128_rate = 168;
 
+    /**
+     * Usage of SHAKE256 as a PRF, concatenates secret and public input
+     * @param seed byte[]: Key Byte Array of Kyber SymBytes
+     * @param nonce byte: single-byte nonce (public PRF input)
+     * @return SHAKEDigest: Initialised SHAKE-256 Object
+     */
     public static SHAKEDigest KyberPRF(byte[] seed, byte nonce)
     {
         SHAKEDigest prf = new SHAKEDigest(256);

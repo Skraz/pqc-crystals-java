@@ -224,9 +224,10 @@ public class KyberEngine
     }
 
     /**
-     * Generates Public Key, Private Key Pair for KEM
-     * @return Byte[0]: Public Key for KEM
-     *         Byte[1]: Private Key for KEM
+     * Generates Public Key, Private Key Pair
+     * for CCA-secure Kyber key encapsulation mechanism
+     * @return Byte[]: [Public Key for CCA,
+     *                  Private Key for CCA]
      */
     public byte[][] generateKemKeyPair()
     {
@@ -254,9 +255,10 @@ public class KyberEngine
     }
 
     /**
-     * Encrypts data with the Public Key
+     * Generates cipher text and
+     * shared secret for given public key
      * @param publicKeyInput: Public Key Byte Array
-     * @return Encrypted Message
+     * @return CipherText || Shared Secret
      */
     public byte[][] kemEncrypt(byte[] publicKeyInput)
     {
@@ -309,7 +311,8 @@ public class KyberEngine
     }
 
     /**
-     * Decrypt the CipherText
+     * Decrypt function of the CPA-secure
+     * public-key encryption scheme underlying Kyber
      * @param cipherText: Encrypted Message
      * @param secretKey: Secret Key
      * @return Decrypted Message

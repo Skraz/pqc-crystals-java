@@ -4,9 +4,12 @@ public class Reduce
 {
 
     /**
-     * Montgomery Reduction
-     * @param a
-     * @return
+     * Montgomery reduction; given a 32-bit integer a, computes
+     * 16-bit integer congruent to a * R^-1 mod q,
+     * where R=2^16
+     * @param a int: Input integer to be reduced;
+     *               has to be in {-q2^15,...,q2^15-1}
+     * @return int: integer in {-q+1,...,q-1} congruent to a * R^-1 modulo q.
      */
     public static short montgomeryReduce(int a)
     {
@@ -37,9 +40,10 @@ public class Reduce
     }
 
     /**
-     * Barret Reduction
-     * @param a
-     * @return
+     * Barrett reduction; given a 16-bit integer a, computes
+     * 16-bit integer congruent to a mod q in {0,...,q}
+     * @param a int: input integer to be reduced
+     * @return int: integer in {0,...,q} congruent to a modulo q.
      */
     public static short barretReduce(short a)
     {
@@ -52,9 +56,9 @@ public class Reduce
     }
 
     /**
-     * Conditional Subtract Q
-     * @param a
-     * @return
+     * Conditionally Subtract Q
+     * @param a int: Input Integer
+     * @return int: a - q if a >= q, else a
      */
     public static short conditionalSubQ(short a)
     {

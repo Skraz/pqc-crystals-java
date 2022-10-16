@@ -34,10 +34,10 @@ class KyberIndCpa
 
 
     /**
-     * Generates IndCpa Key Pair
+     * Generates public and private key for the CPA-secure
+     * public-key encryption scheme underlying Kyber
      *
-     * @return Byte[0]: Public Key Byte Array
-     *         Byte[1]: Private Key Byte Array
+     * @return Byte[]: [Public Key Byte Array, Private Key Byte Array]
      */
     public byte[][] generateKeyPair()
     {
@@ -147,7 +147,9 @@ class KyberIndCpa
     }
 
     /**
-     * IND CPA Encrypt Message
+     * Encryption function of the CPA-Secure
+     * public-key encryption scheme underlying Kyber
+     * @param cipher: Pointer to Output CipherText
      * @param msg: Byte Array Message to Encrypt
      * @param publicKeyInput: Byte Array of Public Key
      * @param coins: Byte Array of Coins to use for Encryption // Unsure
