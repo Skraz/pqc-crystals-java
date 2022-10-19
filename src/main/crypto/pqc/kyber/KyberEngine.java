@@ -298,7 +298,7 @@ public class KyberEngine
         sha3Digest256.update(outputCipherText, 0, CryptoCipherTextBytes);
         sha3Digest256.doFinal(kr, KyberSymBytes);
 
-        Helper.printByteArray(kr);
+        // Helper.printByteArray(kr);
 
         shakeDigest.update(kr, 0, 2 * KyberSymBytes);
         shakeDigest.doFinal(outputSharedSecret, 0, KyberSymBytes);
