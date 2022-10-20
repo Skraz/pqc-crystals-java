@@ -146,6 +146,15 @@ class DilithiumEngine
 
     public DilithiumEngine(int mode, SecureRandom random)
     {
+        /*
+         * Dilithium Modes
+         * Mode = 2
+         * 
+         * Mode = 3
+         * 
+         * Mode = 4
+         * 
+         */
         this.DilithiumMode = mode;
         switch (mode)
         {
@@ -469,8 +478,8 @@ class DilithiumEngine
     }
 
     /**
-     * 
-     * @param msg
+     * Computes Signature
+     * @param msg Byte[]: Message of length Crypto Bytes
      * @param mlen
      * @param rho
      * @param key
