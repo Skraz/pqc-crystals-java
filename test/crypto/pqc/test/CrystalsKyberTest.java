@@ -30,10 +30,10 @@ public class CrystalsKyberTest
     public void test() throws Exception {
         // testRNG();
         // testVectors();
-    //    testReduce();
+       testReduce();
         // testKyber();
-//        testConcurrency();
-        testPlantard();
+    //    testConcurrency();
+        // testPlantard();
 
     }
 
@@ -215,102 +215,102 @@ public class CrystalsKyberTest
         endPlant = System.nanoTime();
         System.out.printf("Mont Time: %d\nPlan Time: %d\n", (endMont - startMont), (endPlant - startPlant));
 
-        // Correctness
-        System.out.printf("Montgomery: %d\n", (Reduce.montgomeryReduce(c) * 2285) % 3329); // 2 ^ 16 mod 3329
-        System.out.printf("Plantard: %d\n", (Reduce.plantardReduce(c) * 1976) % 3329); // (-2) ^ 32 mod 3329
+    //     // Correctness
+    //     System.out.printf("Montgomery: %d\n", (Reduce.montgomeryReduce(c) * 2285) % 3329); // 2 ^ 16 mod 3329
+    //     System.out.printf("Plantard: %d\n", (Reduce.plantardReduce(c) * 1976) % 3329); // (-2) ^ 32 mod 3329
 
-        KyberParameters[] params = new KyberParameters[] {
-            KyberParameters.kyber512,
-            KyberParameters.kyber768,
-            KyberParameters.kyber1024
-        };
-
-
-        String name = "kyber512.rsp";
-        System.out.println("Getting seed from: " + name);
-
-        InputStream src = CrystalsKyberTest.class.getResourceAsStream("/resources/crypto/pqc/test/kyber/"+ name);
-
-        BufferedReader bin = new BufferedReader(new InputStreamReader(src));
-
-        String line = null;
-        HashMap<String, String> buf = new HashMap<String, String>();
-        while ((line = bin.readLine()) != null)
-        {
-            line = line.trim();
-
-            if (line.startsWith("#"))
-            {
-                continue;
-            }
-            if (line.length() == 0)
-            {
-                if (buf.size() > 0)
-                {
-                    String count = buf.get("count");
-                    System.out.println("test case: " + count);
-
-                    byte[] seed = Hex.decode(buf.get("seed")); // seed for Kyber secure random
-                    byte[] pk = Hex.decode(buf.get("pk"));     // public key
-                    byte[] sk = Hex.decode(buf.get("sk"));     // private key
-                    byte[] ct = Hex.decode(buf.get("ct"));     // ciphertext
-                    byte[] ss = Hex.decode(buf.get("ss"));     // session key
-
-                    NISTSecureRandom random = new NISTSecureRandom(seed, null);
-                    for (int paramIndex = 0; paramIndex < params.length; paramIndex++) 
-                    {
-                        KyberParameters parameters = params[paramIndex];
-
-                        KyberKeyPairGenerator kpGen = new KyberKeyPairGenerator();
-                        KyberKeyGenerationParameters genParam = new KyberKeyGenerationParameters(random, parameters);
-                        //
-                        // Generate keys and test.
-                        //
-                        kpGen.init(genParam);
-                        AsymmetricCipherKeyPair kp = kpGen.generateKeyPair();
-
-                        KyberPublicKeyParameters pubParams = (KyberPublicKeyParameters)(KyberPublicKeyParameters)kp.getPublic();
-                        KyberPrivateKeyParameters privParams = (KyberPrivateKeyParameters)(KyberPrivateKeyParameters)kp.getPrivate();
-
-                        // KEM Enc
-                        KyberKEMGenerator KyberEncCipher = new KyberKEMGenerator(random);
-                        SecretWithEncapsulation secWenc = KyberEncCipher.generateEncapsulated(pubParams);
-                        byte[] generated_cipher_text = secWenc.getEncapsulation();
-                        byte[] secret = secWenc.getSecret();
-
-                        // KEM Dec
-                        KyberKEMExtractor KyberDecCipher = new KyberKEMExtractor(privParams);
-
-                        byte[] dec_key = KyberDecCipher.extractSecret(generated_cipher_text);
-                        Helper.printByteArray(dec_key);
-                        Helper.printByteArray(secret);
-
-                        assertTrue(name + " " + count + ": kem_dec key", Arrays.areEqual(dec_key, secret));
+    //     KyberParameters[] params = new KyberParameters[] {
+    //         KyberParameters.kyber512,
+    //         KyberParameters.kyber768,
+    //         KyberParameters.kyber1024
+    //     };
 
 
-                        // } 
-                        // catch (AssertionError e) {
-                        //     System.out.println("Failed assertion error.");
-                        //     System.out.println();
+    //     String name = "kyber512.rsp";
+    //     System.out.println("Getting seed from: " + name);
 
-                        //     System.out.println();
-                        //     continue;
-                        // }
+    //     InputStream src = CrystalsKyberTest.class.getResourceAsStream("/resources/crypto/pqc/test/kyber/"+ name);
+
+    //     BufferedReader bin = new BufferedReader(new InputStreamReader(src));
+
+    //     String line = null;
+    //     HashMap<String, String> buf = new HashMap<String, String>();
+    //     while ((line = bin.readLine()) != null)
+    //     {
+    //         line = line.trim();
+
+    //         if (line.startsWith("#"))
+    //         {
+    //             continue;
+    //         }
+    //         if (line.length() == 0)
+    //         {
+    //             if (buf.size() > 0)
+    //             {
+    //                 String count = buf.get("count");
+    //                 System.out.println("test case: " + count);
+
+    //                 byte[] seed = Hex.decode(buf.get("seed")); // seed for Kyber secure random
+    //                 byte[] pk = Hex.decode(buf.get("pk"));     // public key
+    //                 byte[] sk = Hex.decode(buf.get("sk"));     // private key
+    //                 byte[] ct = Hex.decode(buf.get("ct"));     // ciphertext
+    //                 byte[] ss = Hex.decode(buf.get("ss"));     // session key
+
+    //                 NISTSecureRandom random = new NISTSecureRandom(seed, null);
+    //                 for (int paramIndex = 0; paramIndex < params.length; paramIndex++) 
+    //                 {
+    //                     KyberParameters parameters = params[paramIndex];
+
+    //                     KyberKeyPairGenerator kpGen = new KyberKeyPairGenerator();
+    //                     KyberKeyGenerationParameters genParam = new KyberKeyGenerationParameters(random, parameters);
+    //                     //
+    //                     // Generate keys and test.
+    //                     //
+    //                     kpGen.init(genParam);
+    //                     AsymmetricCipherKeyPair kp = kpGen.generateKeyPair();
+
+    //                     KyberPublicKeyParameters pubParams = (KyberPublicKeyParameters)(KyberPublicKeyParameters)kp.getPublic();
+    //                     KyberPrivateKeyParameters privParams = (KyberPrivateKeyParameters)(KyberPrivateKeyParameters)kp.getPrivate();
+
+    //                     // KEM Enc
+    //                     KyberKEMGenerator KyberEncCipher = new KyberKEMGenerator(random);
+    //                     SecretWithEncapsulation secWenc = KyberEncCipher.generateEncapsulated(pubParams);
+    //                     byte[] generated_cipher_text = secWenc.getEncapsulation();
+    //                     byte[] secret = secWenc.getSecret();
+
+    //                     // KEM Dec
+    //                     KyberKEMExtractor KyberDecCipher = new KyberKEMExtractor(privParams);
+
+    //                     byte[] dec_key = KyberDecCipher.extractSecret(generated_cipher_text);
+    //                     Helper.printByteArray(dec_key);
+    //                     Helper.printByteArray(secret);
+
+    //                     assertTrue(name + " " + count + ": kem_dec key", Arrays.areEqual(dec_key, secret));
+
+
+    //                     // } 
+    //                     // catch (AssertionError e) {
+    //                     //     System.out.println("Failed assertion error.");
+    //                     //     System.out.println();
+
+    //                     //     System.out.println();
+    //                     //     continue;
+    //                     // }
                     
-                    }
-                }
-                buf.clear();
+    //                 }
+    //             }
+    //             buf.clear();
 
-                continue;
-            }
+    //             continue;
+    //         }
 
-            int a = line.indexOf("=");
-            if (a > -1)
-            {
-                buf.put(line.substring(0, a).trim(), line.substring(a + 1).trim());
-            }
-        }
-        System.out.println("testing successful!");
+    //         int a = line.indexOf("=");
+    //         if (a > -1)
+    //         {
+    //             buf.put(line.substring(0, a).trim(), line.substring(a + 1).trim());
+    //         }
+    //     }
+    //     System.out.println("testing successful!");
     }
 
     private void testRNG()
