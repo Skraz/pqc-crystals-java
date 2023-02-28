@@ -39,6 +39,13 @@ public class Poly
         this.coeffs = coeffs;
     }
 
+    /**
+     * Sample polynomial with uniformly random coefficients
+     * in [0,Q-1] by performing rejection sampling on the
+     * output stream of SHAKE256(seed|nonce) or AES256CTR(seed,nonce).
+     * @param seed byte[]: Byte Array of Seed
+     * @param nonce 2-byte nonce
+     */
     public void uniformBlocks(byte[] seed, short nonce)
     {
         int i, ctr, off,
@@ -74,6 +81,16 @@ public class Poly
 
     }
 
+    /**
+     * Sample uniformly random coefficients in [0, Q-1] by
+     * performing rejection sampling on array of random bytes.
+     * @param outputPoly Poly: Output Poly
+     * @param coeffOff
+     * @param len
+     * @param inpBuf
+     * @param buflen
+     * @return
+     */
     private static int rejectUniform(Poly outputPoly, int coeffOff, int len, byte[] inpBuf, int buflen)
     {
         int ctr, pos;
@@ -99,6 +116,13 @@ public class Poly
 
     }
 
+    /**
+     * Sample polynomial with uniformly random coefficients
+     * in [-ETA,ETA] by performing rejection sampling on the
+     * output stream from SHAKE256(seed|nonce)
+     * @param seed
+     * @param nonce
+     */
     public void uniformEta(byte[] seed, short nonce)
     {
         int ctr, polyUniformEtaNBlocks, eta = engine.getDilithiumEta();
@@ -139,6 +163,17 @@ public class Poly
 
     }
 
+    /**
+     * Sample uniformly random coefficients in [-ETA, ETA] by
+     * performing rejection sampling on array of random bytes.
+     * @param outputPoly
+     * @param coeffOff
+     * @param len
+     * @param buf
+     * @param buflen
+     * @param eta
+     * @return
+     */
     private static int rejectEta(Poly outputPoly, int coeffOff, int len, byte[] buf, int buflen, int eta)
     {
         int ctr, pos;
@@ -183,11 +218,22 @@ public class Poly
         return ctr;
     }
 
+    /**
+     * Inplace forward NTT. Coefficients can grow by
+     * 8*Q in absolute value.
+     */
     public void polyNtt()
     {
         this.setCoeffs(Ntt.ntt(this.coeffs));
     }
 
+    /**
+     * Pointwise multiplication of polynomials in NTT domain
+     * representation and multiplication of resulting polynomial
+     * by 2^{-32}
+     * @param v Poly: First input Polynomial
+     * @param w Poly: Second input Polynomial
+     */
     public void pointwiseMontgomery(Poly v, Poly w)
     {
         int i;
@@ -215,6 +261,10 @@ public class Poly
 
     }
 
+    /**
+     * Add poly a to current polynomial. No modular reduction is performed.
+     * @param a Poly: Polynomial to add
+     */
     public void addPoly(Poly a)
     {
         int i;
@@ -225,6 +275,10 @@ public class Poly
     }
 
 
+    /**
+     * Inplace reduction of all coefficients of polynomial to
+     * representative in [-6283009,6283007]
+     */
     public void reduce()
     {
         for (int i = 0; i < dilithiumN; ++i)
@@ -233,11 +287,20 @@ public class Poly
         }
     }
 
+    /**
+     * Inplace inverse NTT and multiplication by 2^{32}.
+     * Input coefficients need to be less than Q in absolute
+     * value and output coefficients are again bounded by Q.
+     */
     public void invNttToMont()
     {
         this.setCoeffs(Ntt.invNttToMont(this.getCoeffs()));
     }
 
+    /**
+     * For all coefficients of in/out polynomial add Q if
+     * coefficient is negative
+     */
     public void conditionalAddQ()
     {
         for (int i = 0; i < dilithiumN; ++i)
@@ -246,6 +309,13 @@ public class Poly
         }
     }
 
+    /**
+     * For all coefficients c of the input polynomial,
+     * compute this[0], a[1] such that c mod Q = c1*2^D + c0
+     * with -2^{D-1} < c0 <= 2^{D-1}. Assumes coefficients to be
+     * standard representatives.
+     * @param a Poly: Pointer to input
+     */
     public void power2Round(Poly a)
     {
         for (int i = 0; i < dilithiumN; ++i)
@@ -256,6 +326,11 @@ public class Poly
         }
     }
 
+    /**
+     * Bit-pack polynomial t1 with coefficients fitting in 10 bits.
+     * Input coefficients are assumed to be standard representatives.
+     * @return
+     */
     public byte[] polyt1Pack()
     {
         byte[] out = new byte[DilithiumEngine.DilithiumPolyT1PackedBytes];
@@ -271,6 +346,11 @@ public class Poly
         return out;
     }
 
+    /**
+     * Unpack polynomial t1 with 10-bit coefficients.
+     * Output coefficients are standard representatives.
+     * @param a
+     */
     public void polyt1Unpack(byte[] a)
     {
         int i;
@@ -284,6 +364,10 @@ public class Poly
         }
     }
 
+    /**
+     * Bit-pack polynomial with coefficients in [-ETA,ETA].
+     * @return 
+     */
     public byte[] polyEtaPack()
     {
         int i;
@@ -324,6 +408,11 @@ public class Poly
         return out;
     }
 
+    /**
+     * Unpack polynomial with coefficients in [-ETA,ETA].
+     * @param a
+     * @param off
+     */
     public void polyEtaUnpack(byte[] a, int off)
     {
         int i, eta = engine.getDilithiumEta();
@@ -363,6 +452,9 @@ public class Poly
         }
     }
 
+    /**
+     * Bit-pack polynomial t0 with coefficients in ]-2^{D-1}, 2^{D-1}].
+     */
     public byte[] polyt0Pack()
     {
         int i;
@@ -404,6 +496,11 @@ public class Poly
         return out;
     }
 
+    /**
+     * Unpack polynomial t0 with coefficients in ]-2^{D-1}, 2^{D-1}].
+     * @param a
+     * @param off
+     */
     public void polyt0Unpack(byte[] a, int off)
     {
         int i;
@@ -473,6 +570,13 @@ public class Poly
     }
 
 
+    /**
+     * Sample polynomial with uniformly random coefficients
+     * in [-(GAMMA1 - 1), GAMMA1] by unpacking output stream
+     * of SHAKE256(seed|nonce) or AES256CTR(seed,nonce).
+     * @param seed
+     * @param nonce
+     */
     public void uniformGamma1(byte[] seed, short nonce)
     {
         byte[] buf = new byte[engine.getPolyUniformGamma1NBlocks() * Symmetric.Shake256Rate];
@@ -552,6 +656,16 @@ public class Poly
         }
     }
 
+    /**
+     * For all coefficients c of the input polynomial,
+     * compute high and low bits c0, c1 such c mod Q = c1*ALPHA + c0
+     * with -ALPHA/2 < c0 <= ALPHA/2 except c1 = (Q-1)/ALPHA where we
+     * set c1 = 0 and -ALPHA/2 <= c0 = c mod Q - Q < 0.
+     * Assumes coefficients to be standard representatives.
+     * @param this Poly: First Output Polynomial
+     * @param a Poly: Second Output Polynomial
+     * @param this Poly: Input Polynomial
+     */
     public void decompose(Poly a)
     {
         int i;
@@ -564,6 +678,11 @@ public class Poly
         }
     }
 
+    /**
+     * Bit-pack polynomial w1 with coefficients in [0,15] or [0,43].
+     * Input coefficients are assumed to be standard representatives.
+     * @return
+     */
     public byte[] w1Pack()
     {
         int i;
@@ -590,6 +709,12 @@ public class Poly
         return out;
     }
 
+    /**
+     * Implementation of H. Samples polynomial with TAU nonzero
+     * coefficients in {-1,1} using the output stream of
+     * SHAKE256(seed)
+     * @param seed
+     */
     public void challenge(byte[] seed)
     {
         int i, b = 0, pos;
@@ -631,6 +756,12 @@ public class Poly
         }
     }
 
+    /**
+     * Check infinity norm of polynomial against given bound.
+     * Assumes input coefficients were reduced by reduce32().
+     * @param B integer: norm bound
+     * @return True if norm is strictly smaller than B <= (Q-1)/8 and False otherwise.
+     */
     public boolean checkNorm(int B)
     {
         int i, t;
@@ -653,6 +784,10 @@ public class Poly
         return false;
     }
 
+    /**
+     * Subtract Polynomial. No modular reduction is performed.
+     * @param inpPoly Poly: Current Poly - inpPoly
+     */
     public void subtract(Poly inpPoly)
     {
         for (int i = 0; i < dilithiumN; ++i)
@@ -661,6 +796,14 @@ public class Poly
         }
     }
 
+    /**
+     * Compute hint polynomial. The coefficients of which indicate
+     * whether the low bits of the corresponding coefficient of
+     * the input polynomial overflow into the high bits.
+     * @param a0 Poly: Lower part of input Polynomial
+     * @param a1 Poly: Higher part of input Polynomial
+     * @return Int: Number of 1 bits
+     */
     public int polyMakeHint(Poly a0, Poly a1)
     {
         int i, s = 0;
@@ -673,6 +816,12 @@ public class Poly
         return s;
     }
 
+    /**
+     * Use hint polynomial to correct the high bits of a polynomial.
+     * @param a Poly: Input Polynomial
+     * @param h Poly: Input Hint Polynomial
+     * @return Poly: This Polynomial with corrected high bits
+     */
     public void polyUseHint(Poly a, Poly h)
     {
         for (int i = 0; i < dilithiumN; ++i)
@@ -681,6 +830,11 @@ public class Poly
         }
     }
 
+    /**
+     * Bit-pack polynomial with coefficients
+     * in [-(GAMMA1 - 1), GAMMA1].
+     * @return
+     */
     public byte[] zPack()
     {
         byte[] outBytes = new byte[engine.getDilithiumPolyZPackedBytes()];
@@ -728,6 +882,11 @@ public class Poly
         return outBytes;
     }
 
+    /**
+     * Unpack polynomial z with coefficients
+     * in [-(GAMMA1 - 1), GAMMA1].
+     * @param a
+     */
     void zUnpack(byte[] a)
     {
         int i;
@@ -793,6 +952,10 @@ public class Poly
         }
     }
 
+    /**
+     * Multiply polynomial by 2^D without modular reduction. Assume
+     * input coefficients to be less than 2^{31-D} in absolute value.
+     */
     public void shiftLeft()
     {
         for (int i = 0; i < dilithiumN; ++i)
